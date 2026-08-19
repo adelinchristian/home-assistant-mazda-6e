@@ -48,10 +48,6 @@ async def async_setup_entry(
     for data in coordinator.data.values():
         location = (data.get("status") or {}).get("location")
         _LOGGER.debug("location payload: %s", location)
-
-        if not isinstance(location, dict) or _coordinate(location, _LATITUDE_KEYS) is None:
-            continue
-
         entities.append(Mazda6eDeviceTracker(coordinator, data["vehicle"], DESCRIPTION))
 
     async_add_entities(entities)
