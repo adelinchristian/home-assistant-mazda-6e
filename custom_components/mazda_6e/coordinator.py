@@ -22,6 +22,7 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
         )
         self.api = mazda6e_api
         self._function_config: dict[int, set[str]] = {}
+        self._last_vehicle_status: dict[int, object] = {}
 
     async def _async_get_function_config(self, vehicle_id: int) -> set[str]:
         """Fetch the vehicle's supported functions once and cache them."""
@@ -49,6 +50,11 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
         for veh in vehicles:
             veh.functions = await self._async_get_function_config(veh.vehicle_id)
             status_response = await self.api.async_get_vehicle_status(veh.vehicle_id)
+
+            status_code = (status_response or {}).get("vehicleStatus", {}).get("status")
+            if self._last_vehicle_status.get(veh.vehicle_id) != status_code:
+                _LOGGER.info("Vehicle %s status code changed to %s", veh.vehicle_id, status_code)
+                self._last_vehicle_status[veh.vehicle_id] = status_code
 
             vehicle_status[veh.vehicle_id] = {
                 "vehicle": veh,

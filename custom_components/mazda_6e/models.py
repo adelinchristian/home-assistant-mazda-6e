@@ -67,5 +67,17 @@ class PowerStatus(IntEnum):
             return "UNKNOWN"
 
 
+class VehicleStatus(IntEnum):
+    UNKNOWN = -1
+    PARKED = 2
+
+    @classmethod
+    def safe_name(cls, value: int | None) -> str:
+        try:
+            return cls(value).name
+        except (ValueError, TypeError):
+            return "UNKNOWN"
+
+
 # door.driverLock / door.passengerLock report 1 right after a remote unlock
 LOCK_UNLOCKED = 1
