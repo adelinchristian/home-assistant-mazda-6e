@@ -10,7 +10,8 @@
         "data": {
           "deviceid": "Device-ID (unique device key)",
           "email": "Email (encrypted)",
-          "password": "Passwort (encrypted)"
+          "password": "Password (encrypted)",
+          "security_code_enc": "Security code (encrypted, optional)"
         },
         "description": "Please enter the encrypted login details.",
         "title": "Mazda 6e Extended Login"
@@ -21,6 +22,20 @@
         },
         "description": "Enter the code you received by email.",
         "title": "Verification Code"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "security_code_enc": "Security code (encrypted)",
+          "enable_experimental_signer": "Enable experimental command signer",
+          "command_signer_mode": "Command signer mode",
+          "command_signer_private_key_pem": "Command signer private key (PEM)"
+        },
+        "description": "Optional. Save the encrypted vehicle security code and, if needed, enable experimental command signing.",
+        "title": "Encrypted Security Code"
       }
     }
   },
@@ -94,6 +109,11 @@
       },
       "trunk": {
         "name": "Trunk"
+      }
+    },
+    "lock": {
+      "vehicle_lock": {
+        "name": "Vehicle lock"
       }
     },
     "device_tracker": {

@@ -10,7 +10,8 @@
         "data": {
           "deviceid": "Device-ID (Eindeutiger Geräte-Schlüssel)",
           "email": "Email (verschlüsselt)",
-          "password": "Passwort (verschlüsselt)"
+          "password": "Passwort (verschlüsselt)",
+          "security_code_enc": "Sicherheitscode (verschlüsselt, optional)"
         },
         "description": "Bitte gib die verschlüsselten Login-Daten ein.",
         "title": "Mazda 6e Extended Login"
@@ -21,6 +22,20 @@
         },
         "description": "Gib den Code ein, den du per Email erhalten hast.",
         "title": "Verifizierungscode"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "security_code_enc": "Sicherheitscode (verschlüsselt)",
+          "enable_experimental_signer": "Experimentellen Command-Signer aktivieren",
+          "command_signer_mode": "Command-Signer-Modus",
+          "command_signer_private_key_pem": "Command-Signer Private Key (PEM)"
+        },
+        "description": "Optional. Speichere den verschlüsselten Fahrzeug-Sicherheitscode und aktiviere bei Bedarf experimentelles Command-Signing.",
+        "title": "Verschlüsselter Sicherheitscode"
       }
     }
   },
@@ -94,6 +109,11 @@
       },
       "trunk": {
         "name": "Kofferraum"
+      }
+    },
+    "lock": {
+      "vehicle_lock": {
+        "name": "Fahrzeugverriegelung"
       }
     },
     "device_tracker": {

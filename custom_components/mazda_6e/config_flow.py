@@ -7,7 +7,14 @@ from homeassistant.core import callback
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 from homeassistant.helpers import aiohttp_client
 
-from .const import DOMAIN
+from .const import (
+    CONF_COMMAND_SIGNER_MODE,
+    CONF_COMMAND_SIGNER_PRIVATE_KEY_PEM,
+    CONF_ENABLE_EXPERIMENTAL_SIGNER,
+    CONF_SECURITY_CODE_ENC,
+    DOMAIN,
+    SIGNER_MODE_RSA_PKCS1V15_SHA256,
+)
 from .api import Mazda6EApi
 
 _LOGGER = logging.getLogger(__name__)
@@ -15,7 +22,9 @@ _LOGGER = logging.getLogger(__name__)
 STEP1_SCHEMA = vol.Schema({
     vol.Required(CONF_EMAIL): str,
     vol.Required(CONF_PASSWORD): str,
-    vol.Required("deviceid", default=str(uuid.uuid4())): str})
+    vol.Required("deviceid", default=str(uuid.uuid4())): str,
+    vol.Optional(CONF_SECURITY_CODE_ENC): str,
+})
 
 STEP3_SCHEMA = vol.Schema({
     vol.Required("verification_code"): str
@@ -30,8 +39,22 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.token = None
         self.deviceid = None
         self.email_enc = None
+        self.security_code_enc = None
         self.api = None
         self.reauth_entry = None  # <--- for Reauth
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        return Mazda6eOptionsFlow(config_entry)
+
+    def _existing_security_code(self):
+        if self.reauth_entry:
+            return self.reauth_entry.options.get(
+                CONF_SECURITY_CODE_ENC,
+                self.reauth_entry.data.get(CONF_SECURITY_CODE_ENC),
+            )
+        return self.security_code_enc
 
     # ------------------------------------------------------------------
     # STEP 0: Re-Auth starten
@@ -44,6 +67,7 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_reauth_confirm(self, user_input=None):
         """reauth have to ask for E-Mail + Password + DeviceID again."""
         if user_input is None:
+            existing_security_code = self._existing_security_code()
             return self.async_show_form(
                 step_id="reauth_confirm",
                 data_schema=vol.Schema({
@@ -52,6 +76,10 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         "deviceid",
                         default=self.reauth_entry.data.get("deviceid"),
+                    ): str,
+                    vol.Optional(
+                        CONF_SECURITY_CODE_ENC,
+                        default=existing_security_code or "",
                     ): str,
                 }),
                 description_placeholders={
@@ -90,6 +118,7 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self.email_enc = user_input[CONF_EMAIL]
         self.deviceid = user_input["deviceid"]
+        self.security_code_enc = user_input.get(CONF_SECURITY_CODE_ENC) or self._existing_security_code()
         self.token = data["token"]
 
         try:
@@ -140,7 +169,8 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "token": self.token,
                 "refresh": self.api.refresh,
                 "email_enc": self.email_enc,
-                "deviceid": self.deviceid
+                "deviceid": self.deviceid,
+                CONF_SECURITY_CODE_ENC: self.security_code_enc,
             }
         )
 
@@ -155,7 +185,8 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 "token": self.token,
                 "refresh": self.api.refresh,
                 "email_enc": self.email_enc,
-                "deviceid": self.deviceid
+                "deviceid": self.deviceid,
+                CONF_SECURITY_CODE_ENC: self.security_code_enc,
             }
         )
 
@@ -164,3 +195,63 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         return self.async_abort(reason="reauth_successful")
+
+
+class Mazda6eOptionsFlow(config_entries.OptionsFlow):
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        if user_input is not None:
+            security_code_enc = user_input.get(CONF_SECURITY_CODE_ENC, "").strip()
+            private_key_pem = user_input.get(CONF_COMMAND_SIGNER_PRIVATE_KEY_PEM, "").strip()
+            options = dict(self.config_entry.options)
+
+            if security_code_enc:
+                options[CONF_SECURITY_CODE_ENC] = security_code_enc
+            else:
+                options.pop(CONF_SECURITY_CODE_ENC, None)
+
+            options[CONF_ENABLE_EXPERIMENTAL_SIGNER] = bool(user_input.get(CONF_ENABLE_EXPERIMENTAL_SIGNER, False))
+
+            signer_mode = user_input.get(CONF_COMMAND_SIGNER_MODE, SIGNER_MODE_RSA_PKCS1V15_SHA256)
+            if signer_mode:
+                options[CONF_COMMAND_SIGNER_MODE] = signer_mode
+            else:
+                options.pop(CONF_COMMAND_SIGNER_MODE, None)
+
+            if private_key_pem:
+                options[CONF_COMMAND_SIGNER_PRIVATE_KEY_PEM] = private_key_pem
+            else:
+                options.pop(CONF_COMMAND_SIGNER_PRIVATE_KEY_PEM, None)
+
+            return self.async_create_entry(title="", data=options)
+
+        current_value = self.config_entry.options.get(
+            CONF_SECURITY_CODE_ENC,
+            self.config_entry.data.get(CONF_SECURITY_CODE_ENC, ""),
+        )
+        current_private_key_pem = self.config_entry.options.get(
+            CONF_COMMAND_SIGNER_PRIVATE_KEY_PEM,
+            self.config_entry.data.get(CONF_COMMAND_SIGNER_PRIVATE_KEY_PEM, ""),
+        )
+        current_signer_mode = self.config_entry.options.get(
+            CONF_COMMAND_SIGNER_MODE,
+            self.config_entry.data.get(CONF_COMMAND_SIGNER_MODE, SIGNER_MODE_RSA_PKCS1V15_SHA256),
+        )
+        current_enable_signer = self.config_entry.options.get(
+            CONF_ENABLE_EXPERIMENTAL_SIGNER,
+            self.config_entry.data.get(CONF_ENABLE_EXPERIMENTAL_SIGNER, False),
+        )
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Optional(CONF_SECURITY_CODE_ENC, default=current_value): str,
+                vol.Optional(CONF_ENABLE_EXPERIMENTAL_SIGNER, default=current_enable_signer): bool,
+                vol.Optional(CONF_COMMAND_SIGNER_MODE, default=current_signer_mode): vol.In(
+                    [SIGNER_MODE_RSA_PKCS1V15_SHA256]
+                ),
+                vol.Optional(CONF_COMMAND_SIGNER_PRIVATE_KEY_PEM, default=current_private_key_pem): str,
+            }),
+        )

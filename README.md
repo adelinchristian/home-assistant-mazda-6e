@@ -4,11 +4,57 @@ This component has been created to be used with Home Assistant.
 
 Mazda 6e presents a possibility to connect your Mazda 6e vehicle to Home Assistant.
 Currently, the integration need the **encrypted** email and password from the official app to connect to Mazda API.
+An optional **encrypted security code** can now also be stored in the integration options. This is required for some remote-control APIs, but control entities are still blocked until request-signing details are fully implemented.
 
 This is the **extended** build. It uses the domain `mazda_6e_extended`, so it can be
 installed and configured next to the original `mazda_6e` integration without conflicts.
 Use a **separate device ID** during setup, otherwise both instances fight over the same
 session on the Mazda backend.
+
+## Security-code helper services
+
+Two helper services are available for debugging control prerequisites:
+
+- `mazda_6e_extended.security_code_status`
+- `mazda_6e_extended.validate_security_code`
+
+Both accept optional `vehicle_id` (integer). If omitted, they run for all configured vehicles
+and emit result events on the Home Assistant event bus:
+
+- `mazda_6e_extended_security_code_status`
+- `mazda_6e_extended_validate_security_code`
+
+## Control framework status
+
+The API client now includes a control-command skeleton:
+
+- serial number request
+- optional encrypted security-code check (`rcToken` path)
+- pluggable `sign` hook
+- command submit + async result polling
+
+Important: commands still require the real signing algorithm. Without registering a signer,
+control submission will raise a signing error by design.
+
+### Experimental signer adapter
+
+An opt-in experimental signer adapter is available in integration options.
+
+Options fields:
+
+- `enable_experimental_signer`
+- `command_signer_mode` (currently: `rsa_pkcs1v15_sha256`)
+- `command_signer_private_key_pem`
+
+If enabled, the integration builds a canonical `key=value` payload string sorted by key,
+then signs it with RSA PKCS1v15 + SHA-256 and base64-encodes the signature.
+
+This is intentionally experimental: Changan-family apps vary by region/version, so payload
+fields, canonicalization, and required omitted keys may still differ.
+
+An experimental lock entity is now included and wired to this command framework. Default
+function codes are `doorLock` / `doorUnlock` and may need adjustment if your API traffic
+uses different values.
 
 # Installation
 
