@@ -30,3 +30,23 @@ class Mazda6eEntity(CoordinatorEntity):
     @property
     def vehicle_data(self) -> dict | None:
         return self.coordinator.data.get(self.vehicle.vehicle_id)
+
+    @property
+    def vehicle_attributes(self) -> dict:
+        attributes = {
+            "vehicle_id": self.vehicle.vehicle_id,
+            "vin": self.vehicle.vin,
+            "model_name": self.vehicle.model_name,
+        }
+
+        optional_attributes = {
+            "car_name": self.vehicle.car_name,
+            "license_plate": self.vehicle.plate_number,
+            "series_name": self.vehicle.series_name,
+        }
+        attributes.update({key: value for key, value in optional_attributes.items() if value})
+
+        if self.vehicle.functions:
+            attributes["supported_functions"] = sorted(self.vehicle.functions)
+
+        return attributes

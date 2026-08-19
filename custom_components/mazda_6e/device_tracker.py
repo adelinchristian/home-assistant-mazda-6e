@@ -75,3 +75,7 @@ class Mazda6eDeviceTracker(Mazda6eEntity, TrackerEntity):
     @property
     def longitude(self) -> float | None:
         return _coordinate(self._location, _LONGITUDE_KEYS)
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        return self.vehicle_attributes

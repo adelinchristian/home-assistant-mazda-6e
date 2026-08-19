@@ -187,11 +187,13 @@ class Mazda6eBinarySensor(Mazda6eEntity, BinarySensorEntity):
 
     @property
     def extra_state_attributes(self) -> dict:
+        attributes = self.vehicle_attributes
+
         if not self.entity_description.attrs_fn:
-            return {}
+            return attributes
 
         try:
-            return self.entity_description.attrs_fn(self.vehicle_data)
+            attributes.update(self.entity_description.attrs_fn(self.vehicle_data))
         except Exception as err:
             _LOGGER.debug("Failed to compute attributes for %s: %s", self.entity_id, err)
-            return {}
+        return attributes
