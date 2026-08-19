@@ -166,6 +166,9 @@
       "remaining_driving_range": {
         "name": "Remaining range"
       },
+      "speed": {
+        "name": "Speed"
+      },
       "seat_status_front_left": {
         "name": "Driver seat status",
         "state": {
@@ -185,20 +188,20 @@
         }
       },
       "seat_status_rear_left": {
-        "name": "Sitzstatus hinten links",
+        "name": "Rear left seat status",
         "state": {
-          "FAN": "Belüftung",
-          "HEATING": "Heizung",
-          "OFF": "Aus",
+          "FAN": "Fan",
+          "HEATING": "Heating",
+          "OFF": "Off",
           "UNKNOWN": "Unknown"
         }
       },
       "seat_status_rear_right": {
-        "name": "Sitzstatus hinten rechts",
+        "name": "Rear right seat status",
         "state": {
-          "FAN": "Belüftung",
-          "HEATING": "Heizung",
-          "OFF": "Aus",
+          "FAN": "Fan",
+          "HEATING": "Heating",
+          "OFF": "Off",
           "UNKNOWN": "Unknown"
         }
       },
@@ -206,7 +209,20 @@
         "name": "Inside temperature"
       },
       "temperature_target": {
-        "name": "Zieltemperatur"
+        "name": "Target temperature"
+      },
+      "temperature_cockpit": {
+        "name": "Cockpit temperature"
+      },
+      "vehicle_status": {
+        "name": "Vehicle status",
+        "state": {
+          "PARKED": "Parked",
+          "UNKNOWN": "Unknown"
+        }
+      },
+      "vehicle_status_code": {
+        "name": "Vehicle status code"
       }
     }
   }

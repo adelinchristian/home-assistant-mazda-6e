@@ -166,6 +166,9 @@
       "remaining_driving_range": {
         "name": "Remaining range"
       },
+      "speed": {
+        "name": "Speed"
+      },
       "seat_status_front_left": {
         "name": "Driver seat status",
         "state": {
@@ -207,6 +210,19 @@
       },
       "temperature_target": {
         "name": "Target temperature"
+      },
+      "temperature_cockpit": {
+        "name": "Cockpit temperature"
+      },
+      "vehicle_status": {
+        "name": "Vehicle status",
+        "state": {
+          "PARKED": "Parked",
+          "UNKNOWN": "Unknown"
+        }
+      },
+      "vehicle_status_code": {
+        "name": "Vehicle status code"
       }
     }
   }
