@@ -112,7 +112,7 @@
         "name": "Ladelimit"
       },
       "chargeCurrent": {
-        "name": "Aktuelle Stromstärke"
+        "name": "Ladestrom"
       },
       "dc_charge_current": {
         "name": "DC-Ladestrom"
