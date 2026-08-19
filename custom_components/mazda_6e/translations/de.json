@@ -8,11 +8,13 @@
     "step": {
       "user": {
         "data": {
-          "email": "Email",
-          "password": "Passwort"
+          "deviceid": "Device-ID (Eindeutiger Geräte-Schlüssel)",
+          "email": "Email (verschlüsselt)",
+          "password": "Passwort (verschlüsselt)",
+          "security_code_enc": "Sicherheitscode (verschlüsselt, optional)"
         },
-        "description": "Bitte gib deine Email und dein Passwort ein.",
-        "title": "Mazda 6e Login"
+        "description": "Bitte gib die verschlüsselten Login-Daten ein.",
+        "title": "Mazda 6e Extended Login"
       },
       "verify": {
         "data": {
@@ -24,15 +26,26 @@
       "reauth_confirm": {
         "data": {
           "email": "Email",
-          "password": "Passwort"
+          "password": "Passwort",
+          "security_code_enc": "Sicherheitscode (verschlüsselt)"
         },
-        "description": "Bitte melde dich erneut an.",
-        "title": "Mazda 6e Login"
+        "description": "Gib die Zugangsdaten ein, um dieses Fahrzeug erneut zu verbinden.",
+        "title": "Mazda 6e erneut verbinden"
       }
-    },
-    "abort": {
-      "device_login_failed": "Device login failed",
-      "reauth_successful": "Authentication updated"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "security_code_enc": "Sicherheitscode (verschlüsselt)",
+          "enable_experimental_signer": "Experimentellen Command-Signer aktivieren",
+          "command_signer_mode": "Command-Signer-Modus",
+          "command_signer_private_key_pem": "Command-Signer Private Key (PEM)"
+        },
+        "description": "Optional. Speichere den verschlüsselten Fahrzeug-Sicherheitscode und aktiviere bei Bedarf experimentelles Command-Signing.",
+        "title": "Verschlüsselter Sicherheitscode"
+      }
     }
   },
   "entity": {
@@ -105,6 +118,11 @@
       },
       "trunk": {
         "name": "Kofferraum"
+      }
+    },
+    "lock": {
+      "vehicle_lock": {
+        "name": "Fahrzeugverriegelung"
       }
     },
     "device_tracker": {

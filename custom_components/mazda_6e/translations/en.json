@@ -8,11 +8,13 @@
     "step": {
       "user": {
         "data": {
-          "email": "Email",
-          "password": "Password"
+          "deviceid": "Device-ID (unique device key)",
+          "email": "Email (encrypted)",
+          "password": "Password (encrypted)",
+          "security_code_enc": "Security code (encrypted, optional)"
         },
-        "description": "Enter your email and password for your Mazda account",
-        "title": "Mazda 6e Login"
+        "description": "Please enter the encrypted login details.",
+        "title": "Mazda 6e Extended Login"
       },
       "verify": {
         "data": {
@@ -24,15 +26,26 @@
       "reauth_confirm": {
         "data": {
           "email": "Email",
-          "password": "Password"
+          "password": "Password",
+          "security_code_enc": "Security code (encrypted)"
         },
-        "description": "Sign in again with your email and password.",
-        "title": "Mazda 6e Login"
+        "description": "Enter the account credentials to reconnect this vehicle.",
+        "title": "Reconnect Mazda 6e"
       }
-    },
-    "abort": {
-      "device_login_failed": "Device login failed",
-      "reauth_successful": "Authentication updated"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "security_code_enc": "Security code (encrypted)",
+          "enable_experimental_signer": "Enable experimental command signer",
+          "command_signer_mode": "Command signer mode",
+          "command_signer_private_key_pem": "Command signer private key (PEM)"
+        },
+        "description": "Optional. Save the encrypted vehicle security code and, if needed, enable experimental command signing.",
+        "title": "Encrypted Security Code"
+      }
     }
   },
   "entity": {
@@ -105,6 +118,11 @@
       },
       "trunk": {
         "name": "Trunk"
+      }
+    },
+    "lock": {
+      "vehicle_lock": {
+        "name": "Vehicle lock"
       }
     },
     "device_tracker": {
