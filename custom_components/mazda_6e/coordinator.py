@@ -21,6 +21,18 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=UPDATE_INTERVAL),
         )
         self.api = mazda6e_api
+        self._function_config: dict[int, set[str]] = {}
+
+    async def _async_get_function_config(self, vehicle_id: int) -> set[str]:
+        """Fetch the vehicle's supported functions once and cache them."""
+        if vehicle_id not in self._function_config:
+            try:
+                self._function_config[vehicle_id] = await self.api.async_get_function_config(vehicle_id)
+            except Exception as err:
+                _LOGGER.debug("Could not read function config for %s: %s", vehicle_id, err)
+                self._function_config[vehicle_id] = set()
+
+        return self._function_config[vehicle_id]
 
     async def _async_update_data(self):
         """Fetch data from API"""
@@ -35,6 +47,7 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
 
         # get status for each vehicle
         for veh in vehicles:
+            veh.functions = await self._async_get_function_config(veh.vehicle_id)
             status_response = await self.api.async_get_vehicle_status(veh.vehicle_id)
 
             vehicle_status[veh.vehicle_id] = {

@@ -37,6 +37,18 @@
   },
   "entity": {
     "binary_sensor": {
+      "air_conditioning": {
+        "name": "Air conditioning"
+      },
+      "dc_plugged_in": {
+        "name": "DC plugged in"
+      },
+      "defrost": {
+        "name": "Defrost"
+      },
+      "driver_lock": {
+        "name": "Driver door lock"
+      },
       "front_left_door": {
         "name": "Driver door"
       },
@@ -49,11 +61,29 @@
       "front_right_window": {
         "name": "Passenger window"
       },
+      "high_beam": {
+        "name": "High beam"
+      },
       "is_charging": {
         "name": "Is charging"
       },
+      "left_turn_signal": {
+        "name": "Left turn signal"
+      },
+      "low_beam": {
+        "name": "Low beam"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "passenger_lock": {
+        "name": "Passenger door lock"
+      },
       "plugged_in": {
         "name": "Plugged in"
+      },
+      "position_lamp": {
+        "name": "Position lamp"
       },
       "rear_left_door": {
         "name": "Rear left door"
@@ -67,16 +97,51 @@
       "rear_right_window": {
         "name": "Rear right window"
       },
+      "right_turn_signal": {
+        "name": "Right turn signal"
+      },
+      "steering_wheel_heater": {
+        "name": "Steering wheel heater"
+      },
       "trunk": {
         "name": "Trunk"
       }
     },
+    "device_tracker": {
+      "location": {
+        "name": "Location"
+      }
+    },
     "sensor": {
+      "ac_charge_current": {
+        "name": "AC charge current"
+      },
       "battery_state_of_charge": {
         "name": "Charge level"
       },
+      "charge_target_soc": {
+        "name": "Charge limit"
+      },
       "chargeCurrent": {
         "name": "Current charge power"
+      },
+      "dc_charge_current": {
+        "name": "DC charge current"
+      },
+      "last_updated": {
+        "name": "Last updated"
+      },
+      "pm25_inside": {
+        "name": "Inside PM2.5"
+      },
+      "power_status": {
+        "name": "Power status",
+        "state": {
+          "ACCESSORY": "Accessory",
+          "OFF": "Off",
+          "ON": "On",
+          "UNKNOWN": "Unknown"
+        }
       },
       "chargeStatus": {
         "name": "Charge status",
@@ -130,8 +195,29 @@
           "UNKNOWN": "Unknown"
         }
       },
+      "seat_status_rear_left": {
+        "name": "Rear left seat status",
+        "state": {
+          "FAN": "Fan",
+          "HEATING": "Heating",
+          "OFF": "Off",
+          "UNKNOWN": "Unknown"
+        }
+      },
+      "seat_status_rear_right": {
+        "name": "Rear right seat status",
+        "state": {
+          "FAN": "Fan",
+          "HEATING": "Heating",
+          "OFF": "Off",
+          "UNKNOWN": "Unknown"
+        }
+      },
       "temperature_inside": {
         "name": "Inside temperature"
+      },
+      "temperature_target": {
+        "name": "Target temperature"
       }
     }
   }
