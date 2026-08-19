@@ -13,7 +13,7 @@
           "password": "Passwort (verschlüsselt)"
         },
         "description": "Bitte gib die verschlüsselten Login-Daten ein.",
-        "title": "Mazda 6e Login"
+        "title": "Mazda 6e Extended Login"
       },
       "verify": {
         "data": {
@@ -26,6 +26,18 @@
   },
   "entity": {
     "binary_sensor": {
+      "air_conditioning": {
+        "name": "Klimaanlage"
+      },
+      "dc_plugged_in": {
+        "name": "DC-Ladekabel angeschlossen"
+      },
+      "defrost": {
+        "name": "Defrost"
+      },
+      "driver_lock": {
+        "name": "Fahrerseitige Verriegelung"
+      },
       "front_left_door": {
         "name": "Driver door"
       },
@@ -38,11 +50,29 @@
       "front_right_window": {
         "name": "Passenger window"
       },
+      "high_beam": {
+        "name": "Fernlicht"
+      },
       "is_charging": {
         "name": "Is charging"
       },
+      "left_turn_signal": {
+        "name": "Blinker links"
+      },
+      "low_beam": {
+        "name": "Abblendlicht"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "passenger_lock": {
+        "name": "Beifahrerseitige Verriegelung"
+      },
       "plugged_in": {
         "name": "Plugged in"
+      },
+      "position_lamp": {
+        "name": "Standlicht"
       },
       "rear_left_door": {
         "name": "Rear left door"
@@ -56,16 +86,51 @@
       "rear_right_window": {
         "name": "Rear right window"
       },
+      "right_turn_signal": {
+        "name": "Blinker rechts"
+      },
+      "steering_wheel_heater": {
+        "name": "Lenkradheizung"
+      },
       "trunk": {
         "name": "Trunk"
       }
     },
+    "device_tracker": {
+      "location": {
+        "name": "Position"
+      }
+    },
     "sensor": {
+      "ac_charge_current": {
+        "name": "AC-Ladestrom"
+      },
       "battery_state_of_charge": {
         "name": "Charge level"
       },
+      "charge_target_soc": {
+        "name": "Ladelimit"
+      },
       "chargeCurrent": {
         "name": "Current charge power"
+      },
+      "dc_charge_current": {
+        "name": "DC-Ladestrom"
+      },
+      "last_updated": {
+        "name": "Zuletzt aktualisiert"
+      },
+      "pm25_inside": {
+        "name": "Feinstaub innen"
+      },
+      "power_status": {
+        "name": "Zündungsstatus",
+        "state": {
+          "ACCESSORY": "Zubehör",
+          "OFF": "Aus",
+          "ON": "An",
+          "UNKNOWN": "Unbekannt"
+        }
       },
       "chargeStatus": {
         "name": "Charge status",
@@ -119,8 +184,29 @@
           "UNKNOWN": "Unknown"
         }
       },
+      "seat_status_rear_left": {
+        "name": "Sitzstatus hinten links",
+        "state": {
+          "FAN": "Belüftung",
+          "HEATING": "Heizung",
+          "OFF": "Aus",
+          "UNKNOWN": "Unbekannt"
+        }
+      },
+      "seat_status_rear_right": {
+        "name": "Sitzstatus hinten rechts",
+        "state": {
+          "FAN": "Belüftung",
+          "HEATING": "Heizung",
+          "OFF": "Aus",
+          "UNKNOWN": "Unbekannt"
+        }
+      },
       "temperature_inside": {
         "name": "Inside temperature"
+      },
+      "temperature_target": {
+        "name": "Zieltemperatur"
       }
     }
   }

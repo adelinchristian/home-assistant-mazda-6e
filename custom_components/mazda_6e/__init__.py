@@ -12,6 +12,7 @@ from .coordinator import Mazda6eCoordinator
 
 PLATFORMS = [
     Platform.BINARY_SENSOR,
+    Platform.DEVICE_TRACKER,
     Platform.SENSOR,
 ]
 
