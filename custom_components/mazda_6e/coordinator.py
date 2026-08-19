@@ -42,6 +42,7 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
         require_security_code: bool = False,
         max_attempts: int = 12,
         interval_seconds: float = 2.0,
+        sign_omit_keys: set[str] | None = None,
     ) -> dict:
         """Execute one control command and refresh coordinator data afterward."""
         lock = self._get_control_lock(vehicle_id)
@@ -54,6 +55,7 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
                 require_security_code=require_security_code,
                 max_attempts=max_attempts,
                 interval_seconds=interval_seconds,
+                sign_omit_keys=sign_omit_keys,
             )
 
         await self.async_request_refresh()

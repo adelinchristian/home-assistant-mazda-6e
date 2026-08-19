@@ -56,6 +56,18 @@ An experimental lock entity is now included and wired to this command framework.
 function codes are `doorLock` / `doorUnlock` and may need adjustment if your API traffic
 uses different values.
 
+An experimental cabin climate entity is also included. It uses default function codes
+`airConditioning` / `airConditioningOff` and sends `targetTemp` in deci-degrees Celsius
+(e.g. 21.5°C -> `215`). These values may require adjustment for your regional app/backend.
+
+Experimental button entities are included for flashing lights and horn. They currently use
+function code `flashingHonking` with action types `1` (flash lights) and `3` (horn), which
+may require tuning for your regional app/backend.
+
+Experimental cover entities are included for windows and trunk. They currently use function
+codes `windows` and `trunk` with payload keys modeled after Changan-family APIs
+(`open`, `openType`, and `command`), and may require tuning for your regional app/backend.
+
 # Installation
 
 ## With HACS

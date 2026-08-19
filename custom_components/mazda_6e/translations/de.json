@@ -116,6 +116,27 @@
         "name": "Fahrzeugverriegelung"
       }
     },
+    "climate": {
+      "cabin_climate": {
+        "name": "Innenraumklima"
+      }
+    },
+    "button": {
+      "flash_lights": {
+        "name": "Licht blinken"
+      },
+      "honk_horn": {
+        "name": "Hupe"
+      }
+    },
+    "cover": {
+      "vehicle_windows": {
+        "name": "Fenster"
+      },
+      "vehicle_trunk": {
+        "name": "Kofferraum"
+      }
+    },
     "device_tracker": {
       "location": {
         "name": "Position"

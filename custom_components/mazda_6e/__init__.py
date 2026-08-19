@@ -25,6 +25,9 @@ from .signers import build_command_signer
 
 PLATFORMS = [
     Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+    Platform.CLIMATE,
+    Platform.COVER,
     Platform.DEVICE_TRACKER,
     Platform.LOCK,
     Platform.SENSOR,

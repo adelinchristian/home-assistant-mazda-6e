@@ -116,6 +116,27 @@
         "name": "Vehicle lock"
       }
     },
+    "climate": {
+      "cabin_climate": {
+        "name": "Cabin climate"
+      }
+    },
+    "button": {
+      "flash_lights": {
+        "name": "Flash lights"
+      },
+      "honk_horn": {
+        "name": "Honk horn"
+      }
+    },
+    "cover": {
+      "vehicle_windows": {
+        "name": "Windows"
+      },
+      "vehicle_trunk": {
+        "name": "Trunk"
+      }
+    },
     "device_tracker": {
       "location": {
         "name": "Location"
