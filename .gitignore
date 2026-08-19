@@ -1,3 +1,25 @@
 /Mazda6e/
 /.idea/
 /requestResponse/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+
+# Captured API traffic (contains tokens, VIN and personal data)
+flows.txt
+*flow*
+*.flow
+*.flows
+*.har
+/captures/
+
+# Editors / OS
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

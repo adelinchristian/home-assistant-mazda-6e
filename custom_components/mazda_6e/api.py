@@ -17,9 +17,9 @@ HEADERS_BASE = {
     "appid": "cma",
     "accept": "*/*",
     "appversion": "V1.2.2",
-    "accept-language": "de-DE;q=1.0",
-    "user-agent": "overseas/1.2.2 (com.mazda.mazda6e; build:6; iOS 26.5.2) Alamofire/5.5.0",
-    "language": "de_DE",
+    "accept-language": "en-US;q=1.0",
+    "user-agent": "overseas/1.2.2 (com.mazda.mazda6e; build:6; iPhone 17 Pro Max; iOS 26.6) Alamofire/5.5.0",
+    "language": "en_US",
 }
 
 
@@ -123,25 +123,51 @@ class Mazda6EApi:
         return self.token
 
     async def async_get_vehicles(self) -> list[Mazda6eVehicle]:
-        url = f"{BASE}/cma-app-user/api/vehicle/vehicles"
         headers = {
             **HEADERS_BASE,
             "authorization": self.token,
             "deviceid": self.deviceid,
         }
 
-        raw = await self._request(url, headers, {})
+        try:
+            raw = await self._request(
+                f"{BASE}/cma-app-user/api/vehicle/vehicles",
+                headers,
+                {},
+            )
+        except Exception as err:
+            _LOGGER.debug("Legacy vehicle endpoint unavailable: %s", err)
+            raw = await self._request(
+                f"{BASE}/cma-app-user/api/car/vehicles",
+                headers,
+                {},
+            )
 
         vehicles = []
         for v in raw.get("data", []):
             vehicles.append(
                 Mazda6eVehicle(
-                    vehicle_id=v["vehicleId"],
+                    vehicle_id=v.get("carId") or v["vehicleId"],
                     vin=v["vin"],
                     model_name=v["modelName"],
+                    car_name=v.get("carName"),
+                    plate_number=v.get("plateNumber"),
+                    series_name=v.get("seriesName"),
                 )
             )
         return vehicles
+
+    async def async_get_function_config(self, vehicle_id: int) -> set[str]:
+        """Return the function codes the vehicle supports (e.g. '#findCar', 'ACSW')."""
+        url = f"{BASE}/cma-app-user/api/vehicle/function-config"
+        headers = {
+            **HEADERS_BASE,
+            "authorization": self.token,
+            "deviceid": self.deviceid,
+        }
+
+        raw = await self._request(url, headers, {"vehicleId": vehicle_id})
+        return set((raw.get("data") or {}).get("confList") or [])
 
     async def async_get_vehicle_status(self, vehicle_id: int):
         url = f"{BASE}/cma-app-car-condition/api/vehicle/condition/v2"
@@ -166,7 +192,7 @@ class Mazda6EApi:
                 "lamp": "1",
                 "warmCoolingBox": "0",
                 "welcome": "0",
-                "location": "0"
+                "location": "1"
             },
             "vehicleId": vehicle_id
         }
