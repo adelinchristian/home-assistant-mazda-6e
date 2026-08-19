@@ -1,42 +1,42 @@
 {
   "config": {
     "error": {
-      "device_login_failed": "Geräte-Anmeldung fehlgeschlagen",
-      "login_failed": "Anmeldung fehlgeschlagen",
-      "verification_failed": "Falscher Code"
+      "device_login_failed": "Device login failed",
+      "login_failed": "Login failed",
+      "verification_failed": "Bad verification code"
     },
     "step": {
       "user": {
         "data": {
-          "deviceid": "Device-ID (Eindeutiger Geräte-Schlüssel)",
-          "email": "Email (verschlüsselt)",
-          "password": "Passwort (verschlüsselt)"
+          "deviceid": "Device-ID (unique device key)",
+          "email": "Email (encrypted)",
+          "password": "Password (encrypted)"
         },
-        "description": "Bitte gib die verschlüsselten Login-Daten ein.",
+        "description": "Please enter the encrypted login details.",
         "title": "Mazda 6e Extended Login"
       },
       "verify": {
         "data": {
           "verification_code": "Code"
         },
-        "description": "Gib den Code ein, den du per Email erhalten hast.",
-        "title": "Verifizierungscode"
+        "description": "Enter the code you received by email.",
+        "title": "Verification Code"
       }
     }
   },
   "entity": {
     "binary_sensor": {
       "air_conditioning": {
-        "name": "Klimaanlage"
+        "name": "Air conditioning"
       },
       "dc_plugged_in": {
-        "name": "DC-Ladekabel angeschlossen"
+        "name": "DC plugged in"
       },
       "defrost": {
         "name": "Defrost"
       },
       "driver_lock": {
-        "name": "Fahrerseitige Verriegelung"
+        "name": "Driver door lock"
       },
       "front_left_door": {
         "name": "Driver door"
@@ -51,28 +51,28 @@
         "name": "Passenger window"
       },
       "high_beam": {
-        "name": "Fernlicht"
+        "name": "High beam"
       },
       "is_charging": {
         "name": "Is charging"
       },
       "left_turn_signal": {
-        "name": "Blinker links"
+        "name": "Left turn signal"
       },
       "low_beam": {
-        "name": "Abblendlicht"
+        "name": "Low beam"
       },
       "online": {
         "name": "Online"
       },
       "passenger_lock": {
-        "name": "Beifahrerseitige Verriegelung"
+        "name": "Passenger door lock"
       },
       "plugged_in": {
         "name": "Plugged in"
       },
       "position_lamp": {
-        "name": "Standlicht"
+        "name": "Position lamp"
       },
       "rear_left_door": {
         "name": "Rear left door"
@@ -87,10 +87,10 @@
         "name": "Rear right window"
       },
       "right_turn_signal": {
-        "name": "Blinker rechts"
+        "name": "Right turn signal"
       },
       "steering_wheel_heater": {
-        "name": "Lenkradheizung"
+        "name": "Steering wheel heater"
       },
       "trunk": {
         "name": "Trunk"
@@ -98,38 +98,38 @@
     },
     "device_tracker": {
       "location": {
-        "name": "Position"
+        "name": "Location"
       }
     },
     "sensor": {
       "ac_charge_current": {
-        "name": "AC-Ladestrom"
+        "name": "AC charge current"
       },
       "battery_state_of_charge": {
         "name": "Charge level"
       },
       "charge_target_soc": {
-        "name": "Ladelimit"
+        "name": "Charge limit"
       },
       "chargeCurrent": {
         "name": "Current charge power"
       },
       "dc_charge_current": {
-        "name": "DC-Ladestrom"
+        "name": "DC charge current"
       },
       "last_updated": {
-        "name": "Zuletzt aktualisiert"
+        "name": "Last updated"
       },
       "pm25_inside": {
-        "name": "Feinstaub innen"
+        "name": "Inside PM2.5"
       },
       "power_status": {
-        "name": "Zündungsstatus",
+        "name": "Power status",
         "state": {
-          "ACCESSORY": "Zubehör",
-          "OFF": "Aus",
-          "ON": "An",
-          "UNKNOWN": "Unbekannt"
+          "ACCESSORY": "Accessory",
+          "OFF": "Off",
+          "ON": "On",
+          "UNKNOWN": "Unknown"
         }
       },
       "chargeStatus": {
@@ -190,7 +190,7 @@
           "FAN": "Belüftung",
           "HEATING": "Heizung",
           "OFF": "Aus",
-          "UNKNOWN": "Unbekannt"
+          "UNKNOWN": "Unknown"
         }
       },
       "seat_status_rear_right": {
@@ -199,7 +199,7 @@
           "FAN": "Belüftung",
           "HEATING": "Heizung",
           "OFF": "Aus",
-          "UNKNOWN": "Unbekannt"
+          "UNKNOWN": "Unknown"
         }
       },
       "temperature_inside": {
