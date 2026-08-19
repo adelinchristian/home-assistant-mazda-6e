@@ -112,7 +112,7 @@
         "name": "Charge limit"
       },
       "chargeCurrent": {
-        "name": "Current charge power"
+        "name": "Charging current"
       },
       "dc_charge_current": {
         "name": "DC charge current"
