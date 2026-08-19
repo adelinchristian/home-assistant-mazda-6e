@@ -12,6 +12,14 @@ SERVICE_VALIDATE_SECURITY_CODE = "validate_security_code"
 
 FUNCTION_CODE_LOCK = "doorLock"
 FUNCTION_CODE_UNLOCK = "doorUnlock"
+FUNCTION_CODE_HVAC = "airConditioning"
+FUNCTION_CODE_HVAC_OFF = "airConditioningOff"
+FUNCTION_CODE_FLASH_HONK = "flashingHonking"
+FUNCTION_CODE_WINDOWS = "windows"
+FUNCTION_CODE_TRUNK = "trunk"
+FLASH_LIGHTS_ACTION_TYPE = 1
+HONK_HORN_ACTION_TYPE = 3
+WINDOWS_OPEN_TYPE_ALL = 10
 LOCK_CAPABILITY_CANDIDATES = (
 	"doorLock",
 	"doorUnlock",
@@ -19,6 +27,38 @@ LOCK_CAPABILITY_CANDIDATES = (
 	"UNLOCK",
 	"DLCK",
 	"DULK",
+)
+
+HVAC_CAPABILITY_CANDIDATES = (
+	"airConditioning",
+	"airConditioningOff",
+	"AIR",
+	"ACSW",
+	"AIRCON",
+	"AIRCONDITION",
+)
+
+FLASH_HONK_CAPABILITY_CANDIDATES = (
+	"flashingHonking",
+	"#findCar",
+	"findCar",
+	"FINDCAR",
+	"HORN",
+	"FLASH",
+)
+
+WINDOWS_CAPABILITY_CANDIDATES = (
+	"windows",
+	"window",
+	"WINDOW",
+	"WINDCTRL",
+)
+
+TRUNK_CAPABILITY_CANDIDATES = (
+	"trunk",
+	"tailgate",
+	"TRUNK",
+	"BOOT",
 )
 
 PUB_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCRYk7lZkHwHCJo8sSoKs5UuD/Jh9j7Pv5Lnoc6wNpVcvGj1LG+a6Kyn+OoRSa0NP24MWoLd0WE+zRYJH2RFNdiXHDdHqZYcxtTsvwyMaBjI6jsizdXrbFc3oBZY4LMfr7nV66/nQB1TP7UO7fYMti3/wfHfbFG0BCgCgWeuGeRXQIDAQAB"
