@@ -17,6 +17,7 @@ from homeassistant.const import (
     UnitOfElectricCurrent,
     UnitOfLength,
     UnitOfPressure,
+    UnitOfSpeed,
     UnitOfTemperature,
     UnitOfTime,
 )
@@ -26,8 +27,8 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import DOMAIN
 from .entity import Mazda6eEntity
-from .helpers.validators import remaining_charge_time, temperature, timestamp_ms
-from .models import Mazda6eVehicle, ChargeStatus, PowerStatus, SeatStatusMode
+from .helpers.validators import remaining_charge_time, speed_value, temperature, timestamp_ms
+from .models import Mazda6eVehicle, ChargeStatus, PowerStatus, SeatStatusMode, VehicleStatus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -110,6 +111,15 @@ SENSOR_TYPES: tuple[Mazda6eSensorDescription, ...] = (
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data["status"]["vehicleStatus"]["totalMileage"],
     ),
+    Mazda6eSensorDescription(
+        key="speed",
+        translation_key="speed",
+        icon="mdi:speedometer",
+        native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
+        device_class=SensorDeviceClass.SPEED,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=speed_value,
+    ),
     *(_tire_pressure(position) for position in _TIRE_KEYS),
     Mazda6eSensorDescription(
         key="chargeCurrent",
@@ -176,6 +186,15 @@ SENSOR_TYPES: tuple[Mazda6eSensorDescription, ...] = (
         value_fn=lambda data: temperature(data["status"]["hvac"]['insideTemp'])
     ),
     Mazda6eSensorDescription(
+        key="temperature_cockpit",
+        translation_key="temperature_cockpit",
+        icon="mdi:thermometer-lines",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: temperature(data["status"]["hvac"]["consTempCockpit"]),
+    ),
+    Mazda6eSensorDescription(
         key="temperature_target",
         translation_key="temperature_target",
         icon="mdi:thermostat",
@@ -209,6 +228,23 @@ SENSOR_TYPES: tuple[Mazda6eSensorDescription, ...] = (
         options=[e.name for e in PowerStatus],
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda data: PowerStatus.safe_name(data["status"]["vehicleStatus"]["powerStatus"]),
+    ),
+    Mazda6eSensorDescription(
+        key="vehicle_status",
+        translation_key="vehicle_status",
+        icon="mdi:car-info",
+        device_class=SensorDeviceClass.ENUM,
+        options=[e.name for e in VehicleStatus],
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda data: VehicleStatus.safe_name(data["status"]["vehicleStatus"]["status"]),
+    ),
+    Mazda6eSensorDescription(
+        key="vehicle_status_code",
+        translation_key="vehicle_status_code",
+        icon="mdi:code-tags",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: data["status"]["vehicleStatus"]["status"],
     ),
     Mazda6eSensorDescription(
         key="last_updated",

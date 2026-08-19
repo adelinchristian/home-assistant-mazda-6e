@@ -177,6 +177,9 @@
       "remaining_driving_range": {
         "name": "Verbleibende Reichweite"
       },
+      "speed": {
+        "name": "Geschwindigkeit"
+      },
       "seat_status_front_left": {
         "name": "Fahrersitz status",
         "state": {
@@ -218,6 +221,19 @@
       },
       "temperature_target": {
         "name": "Zieltemperatur"
+      },
+      "temperature_cockpit": {
+        "name": "Cockpittemperatur"
+      },
+      "vehicle_status": {
+        "name": "Fahrzeugstatus",
+        "state": {
+          "PARKED": "Geparkt",
+          "UNKNOWN": "Unbekannt"
+        }
+      },
+      "vehicle_status_code": {
+        "name": "Fahrzeugstatuscode"
       }
     }
   }
