@@ -69,6 +69,7 @@ class PowerStatus(IntEnum):
 
 class VehicleStatus(IntEnum):
     UNKNOWN = -1
+    DRIVING = 1
     PARKED = 2
 
     @classmethod
