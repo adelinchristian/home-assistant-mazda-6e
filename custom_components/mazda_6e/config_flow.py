@@ -114,6 +114,10 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self.email_enc = encrypt_credential(user_input[CONF_EMAIL])
             password_enc = encrypt_credential(user_input[CONF_PASSWORD])
             data = await self.api.login_email_password(self.email_enc, password_enc)
+            if not isinstance(data.get("emailVerify"), bool):
+                raise ValueError("Missing verification state")
+            if not all(isinstance(data.get(key), str) and data[key] for key in ("token", "refreshToken")):
+                raise ValueError("Incomplete token pair")
         except Exception as err:
             _LOGGER.error("Login failed: %s", err)
             return self.async_show_form(
@@ -124,6 +128,9 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         self.security_code_enc = user_input.get(CONF_SECURITY_CODE_ENC) or self._existing_security_code()
         self.token = data["token"]
+
+        if data["emailVerify"] is False:
+            return self._finish_login()
 
         try:
             await self.api.send_device_login(

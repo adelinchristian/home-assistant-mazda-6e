@@ -8,12 +8,11 @@
     "step": {
       "user": {
         "data": {
-          "deviceid": "Device-ID (Eindeutiger Geräte-Schlüssel)",
-          "email": "Email (verschlüsselt)",
-          "password": "Passwort (verschlüsselt)",
+          "email": "Email",
+          "password": "Passwort",
           "security_code_enc": "Sicherheitscode (verschlüsselt, optional)"
         },
-        "description": "Bitte gib die verschlüsselten Login-Daten ein.",
+        "description": "Bitte gib deine Mazda-Konto-E-Mail und dein Passwort ein.",
         "title": "Mazda 6e Extended Login"
       },
       "verify": {
