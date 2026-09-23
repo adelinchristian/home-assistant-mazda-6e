@@ -240,6 +240,7 @@ class Mazda6EApi:
                 "targetTemp": int(round(target_temp * 10)),
                 "runTime": run_time,
             },
+            allow_already_satisfied=True,
         )
 
     async def async_find_vehicle(self, vehicle_id: int):
@@ -289,7 +290,7 @@ class Mazda6EApi:
         return await self._async_signed_control(
             vehicle_id,
             f"seats/{control}",
-            {f"{position}Switch": enabled, f"{position}Level": level},
+            {f"{position}Switch": int(enabled), f"{position}Level": level},
         )
 
     async def async_lock(self, vehicle_id: int):
@@ -337,7 +338,9 @@ class Mazda6EApi:
             headers, vehicle_id, submitted_data["commandId"], allow_already_locked=not open_doors,
         )
 
-    async def _async_signed_control(self, vehicle_id: int, control_name: str, payload: dict):
+    async def _async_signed_control(
+        self, vehicle_id: int, control_name: str, payload: dict, *, allow_already_satisfied: bool = False,
+    ):
         """Submit and poll a captured signed Mazda control command."""
         if not self.control_private_key:
             raise ConfigEntryAuthFailed("Sign in again to register a control key")
@@ -361,7 +364,10 @@ class Mazda6EApi:
             raise ValueError(f"{control_name} response omitted commandId")
 
         return await self._async_wait_for_control_result(
-            headers, vehicle_id, submitted_data["commandId"], allow_already_locked=False,
+            headers,
+            vehicle_id,
+            submitted_data["commandId"],
+            allow_already_locked=allow_already_satisfied,
         )
 
     async def _async_protected_control(

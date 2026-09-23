@@ -48,3 +48,24 @@ def test_sign_control_payload_matches_captured_window_and_trunk_fields():
         padding.PKCS1v15(),
         hashes.SHA256(),
     )
+
+
+def test_sign_control_payload_matches_captured_seat_switch_fields():
+    """Seat command switches are numeric values in the captured Mazda request."""
+    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    private_der = private_key.private_bytes(
+        serialization.Encoding.DER,
+        serialization.PrivateFormat.PKCS8,
+        serialization.NoEncryption(),
+    )
+    signature = sign_control_payload(
+        {"masterLevel": 3, "masterSwitch": 1, "seriralNo": "serial", "vehicleId": "42"},
+        base64.encodebytes(private_der).decode(),
+    )
+
+    private_key.public_key().verify(
+        base64.b64decode(signature),
+        b"masterLevel=3&masterSwitch=1&seriralNo=serial&vehicleId=42",
+        padding.PKCS1v15(),
+        hashes.SHA256(),
+    )
