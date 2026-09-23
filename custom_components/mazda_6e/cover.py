@@ -6,6 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
+from .api import MazdaApiError
 from .const import DOMAIN
 from .entity import Mazda6eEntity
 
@@ -82,7 +83,7 @@ class Mazda6eWindowsCover(_Mazda6eCover):
     async def _async_set_windows(self, open_windows: bool) -> None:
         try:
             await self.coordinator.api.async_set_windows(self.vehicle.vehicle_id, open_windows)
-        except (RuntimeError, TimeoutError) as err:
+        except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the window command: {err}") from err
         await self.coordinator.async_request_refresh()
 
@@ -109,6 +110,6 @@ class Mazda6eTrunkCover(_Mazda6eCover):
     async def _async_set_trunk(self, open_trunk: bool) -> None:
         try:
             await self.coordinator.api.async_set_trunk(self.vehicle.vehicle_id, open_trunk)
-        except (RuntimeError, TimeoutError) as err:
+        except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the trunk command: {err}") from err
         await self.coordinator.async_request_refresh()

@@ -3,8 +3,10 @@
 from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
+from .api import MazdaApiError
 from .const import DOMAIN
 from .entity import Mazda6eEntity
 
@@ -40,5 +42,8 @@ class Mazda6eFindVehicleButton(Mazda6eEntity, ButtonEntity):
         return super().available and bool(self.coordinator.api.control_private_key)
 
     async def async_press(self) -> None:
-        await self.coordinator.api.async_find_vehicle(self.vehicle.vehicle_id)
+        try:
+            await self.coordinator.api.async_find_vehicle(self.vehicle.vehicle_id)
+        except (MazdaApiError, RuntimeError, TimeoutError) as err:
+            raise HomeAssistantError(f"Mazda rejected the Find vehicle command: {err}") from err
         await self.coordinator.async_request_refresh()
