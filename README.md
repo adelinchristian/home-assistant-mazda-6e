@@ -31,6 +31,14 @@ In addition to the upstream integration's vehicle data, this build provides:
 Cloud door lock and unlock controls are included from the upstream `main` branch. They
 require Mazda's six-digit Control Passcode and are described below.
 
+The extended build also includes cabin climate control with a target temperature and a
+**Find vehicle** button, which triggers Mazda's captured flashing-and-honking command.
+Both require the registered control key; unlike door lock and unlock, the captured Mazda
+requests do not require the Control Passcode.
+
+Window and trunk controls are also available when the vehicle advertises the required
+capability. They require both the registered control key and the Control Passcode.
+
 # Installation
 
 ## With HACS

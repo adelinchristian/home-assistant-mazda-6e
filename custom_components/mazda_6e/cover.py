@@ -1,0 +1,103 @@
+"""Cover controls for Mazda 6e windows and trunk."""
+
+from homeassistant.components.cover import CoverDeviceClass, CoverEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+
+from .const import DOMAIN
+from .entity import Mazda6eEntity
+
+
+def _supports(vehicle, *function_codes: str) -> bool:
+    return not vehicle.functions or any(code in vehicle.functions for code in function_codes)
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
+    """Set up window and trunk covers where vehicle status supports them."""
+    coordinator = hass.data[DOMAIN][entry.entry_id]
+    entities = []
+
+    for item in coordinator.data.values():
+        vehicle = item["vehicle"]
+        status = item.get("status") or {}
+        if "window" in status and _supports(vehicle, "WindowSW", "WindowSlightlyDown"):
+            entities.append(Mazda6eWindowsCover(coordinator, vehicle))
+        if "door" in status and _supports(vehicle, "TrunkAutoSW", "TrunkUnlock"):
+            entities.append(Mazda6eTrunkCover(coordinator, vehicle))
+
+    async_add_entities(entities)
+
+
+class _Mazda6eCover(Mazda6eEntity, CoverEntity):
+    """Base class for vehicle cloud-control covers."""
+
+    @property
+    def available(self) -> bool:
+        return (
+            super().available
+            and bool(self.coordinator.api.control_private_key)
+            and bool(self.coordinator.api.control_pin)
+        )
+
+
+class Mazda6eWindowsCover(_Mazda6eCover):
+    """Represent all vehicle windows as one cover."""
+
+    _attr_translation_key = "windows"
+    _attr_device_class = CoverDeviceClass.WINDOW
+    _attr_icon = "mdi:car-door"
+
+    def __init__(self, coordinator, vehicle) -> None:
+        class Description:
+            key = "windows"
+
+        super().__init__(coordinator, vehicle, Description())
+
+    @property
+    def is_closed(self) -> bool | None:
+        try:
+            return not any(self.vehicle_data["status"]["window"]["windows"])
+        except (KeyError, TypeError):
+            return None
+
+    async def async_open_cover(self, **kwargs) -> None:
+        await self.coordinator.api.async_set_windows(self.vehicle.vehicle_id, True)
+        await self.coordinator.async_request_refresh()
+
+    async def async_close_cover(self, **kwargs) -> None:
+        await self.coordinator.api.async_set_windows(self.vehicle.vehicle_id, False)
+        await self.coordinator.async_request_refresh()
+
+
+class Mazda6eTrunkCover(_Mazda6eCover):
+    """Represent the vehicle trunk as a cover."""
+
+    _attr_translation_key = "trunk"
+    _attr_device_class = CoverDeviceClass.GARAGE
+    _attr_icon = "mdi:car-back"
+
+    def __init__(self, coordinator, vehicle) -> None:
+        class Description:
+            key = "trunk"
+
+        super().__init__(coordinator, vehicle, Description())
+
+    @property
+    def is_closed(self) -> bool | None:
+        try:
+            return not bool(self.vehicle_data["status"]["door"]["trunk"])
+        except (KeyError, TypeError):
+            return None
+
+    async def async_open_cover(self, **kwargs) -> None:
+        await self.coordinator.api.async_set_trunk(self.vehicle.vehicle_id, True)
+        await self.coordinator.async_request_refresh()
+
+    async def async_close_cover(self, **kwargs) -> None:
+        await self.coordinator.api.async_set_trunk(self.vehicle.vehicle_id, False)
+        await self.coordinator.async_request_refresh()

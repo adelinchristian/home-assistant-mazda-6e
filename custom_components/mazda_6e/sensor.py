@@ -270,8 +270,10 @@ async def async_setup_entry(
 
         for description in SENSOR_TYPES:
             try:
-                description.value_fn(data)
+                value = description.value_fn(data)
             except Exception:
+                continue
+            if description.key == "speed" and value is None:
                 continue
 
             entities.append(

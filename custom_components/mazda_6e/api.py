@@ -4,7 +4,7 @@ import time
 import logging
 
 from .const import DEVICE_NAME
-from .credential_crypto import decrypt_control_serial, encrypt_credential, sign_door_control
+from .credential_crypto import decrypt_control_serial, encrypt_credential, sign_control_payload
 from .models import Mazda6eVehicle
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
@@ -222,6 +222,46 @@ class Mazda6EApi:
         """Unlock the vehicle doors through Mazda cloud control."""
         return await self._async_door_control(vehicle_id, open_doors=True)
 
+    async def async_set_air_conditioner(
+        self, vehicle_id: int, enabled: bool, target_temp: float, run_time: int = 15,
+    ):
+        """Set remote cabin climate using Mazda's signed cloud-control endpoint."""
+        return await self._async_signed_control(
+            vehicle_id,
+            "air-conditioner",
+            {
+                "enabled": enabled,
+                "targetTemp": int(round(target_temp * 10)),
+                "runTime": run_time,
+            },
+        )
+
+    async def async_find_vehicle(self, vehicle_id: int):
+        """Trigger Mazda's captured flashing-and-honking find-vehicle command."""
+        return await self._async_signed_control(
+            vehicle_id,
+            "flashing-honking",
+            {"type": 1},
+        )
+
+    async def async_set_windows(self, vehicle_id: int, open_windows: bool):
+        """Open or close all vehicle windows through cloud control."""
+        return await self._async_protected_control(
+            vehicle_id,
+            "windows",
+            {"command": "window", "open": open_windows, "openType": 10},
+            sign_omit_keys={"command"},
+        )
+
+    async def async_set_trunk(self, vehicle_id: int, open_trunk: bool):
+        """Open or close the trunk through cloud control."""
+        return await self._async_protected_control(
+            vehicle_id,
+            "trunk",
+            {"command": "trunk", "open": open_trunk},
+            sign_omit_keys={"command"},
+        )
+
     async def async_lock(self, vehicle_id: int):
         """Lock the vehicle doors through Mazda cloud control."""
         return await self._async_door_control(vehicle_id, open_doors=False)
@@ -250,18 +290,111 @@ class Mazda6EApi:
         if not isinstance(encrypted_serial, str):
             raise ValueError("Serial response omitted data")
         serial_no = decrypt_control_serial(encrypted_serial, self.control_private_key)
-        signature = sign_door_control(
-            open_doors, rc_token, serial_no, vehicle_id, self.control_private_key,
-        )
-        submitted = await self._request(
-            f"{BASE}/cma-app-car-control/api/control/doors", headers,
-            {"command": "lock", "open": open_doors, "rcToken": rc_token,
-             "seriralNo": serial_no, "sign": signature, "vehicleId": str(vehicle_id)},
+        submitted = await self._async_submit_signed_control(
+            headers,
+            "doors",
+            {
+                "open": open_doors,
+                "rcToken": rc_token,
+                "seriralNo": serial_no,
+                "vehicleId": str(vehicle_id),
+            },
         )
         submitted_data = submitted.get("data")
         if not isinstance(submitted_data, dict) or not isinstance(submitted_data.get("commandId"), str):
             raise ValueError("Door response omitted commandId")
-        command_id = submitted_data["commandId"]
+        return await self._async_wait_for_control_result(
+            headers, vehicle_id, submitted_data["commandId"], allow_already_locked=not open_doors,
+        )
+
+    async def _async_signed_control(self, vehicle_id: int, control_name: str, payload: dict):
+        """Submit and poll a captured signed Mazda control command."""
+        if not self.control_private_key:
+            raise ConfigEntryAuthFailed("Sign in again to register a control key")
+
+        headers = {**HEADERS_BASE, "authorization": self.token, "deviceid": self.deviceid}
+        serial_response = await self._request(
+            f"{BASE}/cma-app-car-control/api/serial-no/get", headers, {"type": "1"},
+        )
+        encrypted_serial = serial_response.get("data")
+        if not isinstance(encrypted_serial, str):
+            raise ValueError("Serial response omitted data")
+
+        payload = {
+            **payload,
+            "seriralNo": decrypt_control_serial(encrypted_serial, self.control_private_key),
+            "vehicleId": str(vehicle_id),
+        }
+        submitted = await self._async_submit_signed_control(headers, control_name, payload)
+        submitted_data = submitted.get("data")
+        if not isinstance(submitted_data, dict) or not isinstance(submitted_data.get("commandId"), str):
+            raise ValueError(f"{control_name} response omitted commandId")
+
+        return await self._async_wait_for_control_result(
+            headers, vehicle_id, submitted_data["commandId"], allow_already_locked=False,
+        )
+
+    async def _async_protected_control(
+        self, vehicle_id: int, control_name: str, payload: dict, *, sign_omit_keys: set[str],
+    ):
+        """Submit a command that requires a freshly authorized control passcode."""
+        if not self.control_private_key:
+            raise ConfigEntryAuthFailed("Sign in again to register a control key")
+        if not self.control_pin:
+            raise ConfigEntryAuthFailed("Sign in again to register the control passcode")
+
+        headers = {**HEADERS_BASE, "authorization": self.token, "deviceid": self.deviceid}
+        checked = await self._request(
+            f"{BASE}/cma-app-car-control/api/security-code/check-code", headers,
+            {"safeCode": encrypt_credential(self.control_pin)},
+        )
+        checked_data = checked.get("data")
+        if not isinstance(checked_data, dict) or not isinstance(checked_data.get("rcToken"), str):
+            raise ValueError("Control passcode response omitted rcToken")
+
+        serial_response = await self._request(
+            f"{BASE}/cma-app-car-control/api/serial-no/get", headers, {"type": "1"},
+        )
+        encrypted_serial = serial_response.get("data")
+        if not isinstance(encrypted_serial, str):
+            raise ValueError("Serial response omitted data")
+
+        submitted = await self._async_submit_signed_control(
+            headers,
+            control_name,
+            {
+                **payload,
+                "rcToken": checked_data["rcToken"],
+                "seriralNo": decrypt_control_serial(encrypted_serial, self.control_private_key),
+                "vehicleId": str(vehicle_id),
+            },
+            sign_omit_keys=sign_omit_keys,
+        )
+        submitted_data = submitted.get("data")
+        if not isinstance(submitted_data, dict) or not isinstance(submitted_data.get("commandId"), str):
+            raise ValueError(f"{control_name} response omitted commandId")
+
+        return await self._async_wait_for_control_result(
+            headers, vehicle_id, submitted_data["commandId"], allow_already_locked=False,
+        )
+
+    async def _async_submit_signed_control(
+        self, headers: dict, control_name: str, payload: dict, *, sign_omit_keys: set[str] | None = None,
+    ):
+        signed_payload = {
+            **payload,
+            "sign": sign_control_payload(
+                payload, self.control_private_key, omit_keys=sign_omit_keys,
+            ),
+        }
+        return await self._request(
+            f"{BASE}/cma-app-car-control/api/control/{control_name}", headers, signed_payload,
+        )
+
+    async def _async_wait_for_control_result(
+        self, headers: dict, vehicle_id: int, command_id: str, *, allow_already_locked: bool,
+    ):
+        """Poll a command until Mazda accepts or rejects it."""
 
         for _ in range(15):
             result = await self._request(
@@ -272,9 +405,9 @@ class Mazda6EApi:
             if not isinstance(data, dict) or type(data.get("resultCode")) is not int:
                 raise ValueError("Unknown door-control result")
             result_code = data["resultCode"]
-            if result_code == 0 or (not open_doors and result_code == 1015):
+            if result_code == 0 or (allow_already_locked and result_code == 1015):
                 return data
             if result_code != -100:
-                raise RuntimeError(f"Door control failed with result code {result_code}")
+                raise RuntimeError(f"Control failed with result code {result_code}")
             await asyncio.sleep(1)
-        raise TimeoutError("Door control remained in PROCESSING state")
+        raise TimeoutError("Control remained in PROCESSING state")

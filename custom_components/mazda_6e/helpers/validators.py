@@ -6,7 +6,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def speed_value(data):
-    speed = data["status"]["vehicleStatus"].get("speed")
+    status = data.get("status") or {}
+    vehicle_status = status.get("vehicleStatus") or {}
+    speed = vehicle_status.get("speed")
 
     if speed is None:
         return None

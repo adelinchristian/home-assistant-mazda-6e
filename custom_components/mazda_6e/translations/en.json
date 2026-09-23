@@ -59,6 +59,24 @@
         "name": "Doors"
       }
     },
+    "button": {
+      "find_vehicle": {
+        "name": "Find vehicle"
+      }
+    },
+    "climate": {
+      "cabin_climate": {
+        "name": "Cabin climate"
+      }
+    },
+    "cover": {
+      "trunk": {
+        "name": "Trunk"
+      },
+      "windows": {
+        "name": "Windows"
+      }
+    },
     "binary_sensor": {
       "air_conditioning": {
         "name": "Air conditioning"

@@ -59,6 +59,24 @@
         "name": "Türen"
       }
     },
+    "button": {
+      "find_vehicle": {
+        "name": "Fahrzeug finden"
+      }
+    },
+    "climate": {
+      "cabin_climate": {
+        "name": "Innenraumklima"
+      }
+    },
+    "cover": {
+      "trunk": {
+        "name": "Kofferraum"
+      },
+      "windows": {
+        "name": "Fenster"
+      }
+    },
     "binary_sensor": {
       "air_conditioning": {
         "name": "Klimaanlage"
