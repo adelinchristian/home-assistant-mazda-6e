@@ -244,10 +244,14 @@ class Mazda6EApi:
 
     async def async_find_vehicle(self, vehicle_id: int):
         """Trigger Mazda's captured flashing-and-honking find-vehicle command."""
+        return await self.async_flash_honk(vehicle_id, action_type=1)
+
+    async def async_flash_honk(self, vehicle_id: int, action_type: int):
+        """Trigger a captured Mazda flashing-and-honking action."""
         return await self._async_signed_control(
             vehicle_id,
             "flashing-honking",
-            {"type": 1},
+            {"type": action_type},
         )
 
     async def async_set_windows(self, vehicle_id: int, open_windows: bool):

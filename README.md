@@ -39,6 +39,8 @@ depend on the vehicle capabilities Mazda advertises:
 	does not require the Control Passcode.
 - **Find vehicle** triggers Mazda's flashing-and-honking command and does not require the
 	Control Passcode.
+- **Honk horn** triggers Mazda's captured horn command and does not require the Control
+	Passcode.
 
 The GPS tracker and speed sensor are created only when Mazda returns valid coordinates or
 speed in the vehicle status payload.

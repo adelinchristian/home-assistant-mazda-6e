@@ -62,6 +62,9 @@
     "button": {
       "find_vehicle": {
         "name": "Fahrzeug finden"
+      },
+      "honk_horn": {
+        "name": "Hupe"
       }
     },
     "climate": {
