@@ -255,8 +255,7 @@ class Mazda6EApi:
         return await self._async_protected_control(
             vehicle_id,
             "windows",
-            {"command": "window", "open": open_windows, "openType": 10},
-            sign_omit_keys={"command"},
+            {"open": open_windows},
         )
 
     async def async_set_trunk(self, vehicle_id: int, open_trunk: bool):
@@ -264,8 +263,7 @@ class Mazda6EApi:
         return await self._async_protected_control(
             vehicle_id,
             "trunk",
-            {"command": "trunk", "open": open_trunk},
-            sign_omit_keys={"command"},
+            {"open": open_trunk},
         )
 
     async def async_lock(self, vehicle_id: int):
@@ -341,7 +339,7 @@ class Mazda6EApi:
         )
 
     async def _async_protected_control(
-        self, vehicle_id: int, control_name: str, payload: dict, *, sign_omit_keys: set[str],
+        self, vehicle_id: int, control_name: str, payload: dict,
     ):
         """Submit a command that requires a freshly authorized control passcode."""
         if not self.control_private_key:
@@ -374,7 +372,6 @@ class Mazda6EApi:
                 "seriralNo": decrypt_control_serial(encrypted_serial, self.control_private_key),
                 "vehicleId": str(vehicle_id),
             },
-            sign_omit_keys=sign_omit_keys,
         )
         submitted_data = submitted.get("data")
         if not isinstance(submitted_data, dict) or not isinstance(submitted_data.get("commandId"), str):

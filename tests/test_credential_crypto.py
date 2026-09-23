@@ -29,8 +29,8 @@ def test_sign_control_payload_sorts_fields_and_lowercases_booleans():
     )
 
 
-def test_sign_control_payload_can_omit_unsigned_command_fields():
-    """Window and trunk commands omit their command discriminator from the signature."""
+def test_sign_control_payload_matches_captured_window_and_trunk_fields():
+    """Window and trunk commands sign only the fields sent by the Mazda app."""
     private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     private_der = private_key.private_bytes(
         serialization.Encoding.DER,
@@ -38,14 +38,13 @@ def test_sign_control_payload_can_omit_unsigned_command_fields():
         serialization.NoEncryption(),
     )
     signature = sign_control_payload(
-        {"command": "window", "open": True, "openType": 10, "vehicleId": "42"},
+        {"open": True, "rcToken": "token", "seriralNo": "serial", "vehicleId": "42"},
         base64.encodebytes(private_der).decode(),
-        omit_keys={"command"},
     )
 
     private_key.public_key().verify(
         base64.b64decode(signature),
-        b"open=true&openType=10&vehicleId=42",
+        b"open=true&rcToken=token&seriralNo=serial&vehicleId=42",
         padding.PKCS1v15(),
         hashes.SHA256(),
     )
