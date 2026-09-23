@@ -12,6 +12,25 @@ installed and configured next to the original `mazda_6e` integration without con
 Use a **separate device ID** during setup, otherwise both instances fight over the same
 session on the Mazda backend.
 
+# Extended features
+
+In addition to the upstream integration's vehicle data, this build provides:
+
+- A GPS `device_tracker` for the vehicle's last reported location.
+- Sensors for speed, AC and DC charging current, charge target, cockpit and target
+	temperature, cabin PM2.5, power state, vehicle status, and last update time.
+- Binary sensors for the driver and passenger locks, DC charging connection, air
+	conditioning, defrost, steering-wheel heating, and vehicle connectivity.
+- Seat-status and tire-pressure entities, plus door and window state for every seating
+	position.
+- More resilient vehicle and status retrieval, including location data and additional
+	Mazda vehicle-data fields.
+- A **Reconfigure** flow to update account credentials and the Control Passcode without
+	removing the integration.
+
+Cloud door lock and unlock controls are included from the upstream `main` branch. They
+require Mazda's six-digit Control Passcode and are described below.
+
 # Installation
 
 ## With HACS
