@@ -201,7 +201,7 @@ class Mazda6eConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self._handle_existing_entry_success()
 
         return self.async_create_entry(
-            title="Mazda 6e Extended",
+            title="Mazda 6e",
             data={
                 "token": self.token,
                 "refresh": self.api.refresh,
