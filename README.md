@@ -28,16 +28,20 @@ In addition to the upstream integration's vehicle data, this build provides:
 - A **Reconfigure** flow to update account credentials and the Control Passcode without
 	removing the integration.
 
-Cloud door lock and unlock controls are included from the upstream `main` branch. They
-require Mazda's six-digit Control Passcode and are described below.
+# Cloud controls
 
-The extended build also includes cabin climate control with a target temperature and a
-**Find vehicle** button, which triggers Mazda's captured flashing-and-honking command.
-Both require the registered control key; unlike door lock and unlock, the captured Mazda
-requests do not require the Control Passcode.
+All cloud controls require the control key registered during sign-in. Available controls
+depend on the vehicle capabilities Mazda advertises:
 
-Window and trunk controls are also available when the vehicle advertises the required
-capability. They require both the registered control key and the Control Passcode.
+- Door lock and unlock require Mazda's six-digit Control Passcode.
+- Windows and trunk are exposed as Home Assistant covers and require the Control Passcode.
+- Cabin climate provides on/off control and a target temperature. The captured Mazda request
+	does not require the Control Passcode.
+- **Find vehicle** triggers Mazda's flashing-and-honking command and does not require the
+	Control Passcode.
+
+The GPS tracker and speed sensor are created only when Mazda returns valid coordinates or
+speed in the vehicle status payload.
 
 # Installation
 
