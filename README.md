@@ -3,7 +3,9 @@
 This component has been created to be used with Home Assistant.
 
 Mazda 6e presents a possibility to connect your Mazda 6e vehicle to Home Assistant.
-This integration accepts your email and password and encrypts them internally. A device ID is generated automatically and retained for reauthentication. Enter the verification code sent by email when requested. Existing entries remain compatible; no migration or manual device ID is needed. Plaintext credentials and passwords are not saved in the config entry.
+This integration accepts your email and password and encrypts them internally. A device ID is generated automatically and retained for reauthentication. Enter the verification code sent by email when requested. Plaintext credentials and passwords are not saved in the config entry.
+
+The integration exposes a lock entity for the vehicle doors. Mazda's six-digit Control Passcode can be entered during setup or later through **Reconfigure**. The lock entity remains unavailable until the passcode and control key have been configured. Normal Home Assistant lock and unlock actions do not ask for a code.
 
 This is the **extended** build. It uses the domain `mazda_6e_extended`, so it can be
 installed and configured next to the original `mazda_6e` integration without conflicts.
@@ -28,12 +30,16 @@ Assistant Core installation's `custom_components` directory **and rename it to
 `mazda_6e_extended`** so it matches the integration domain. Restart Home Assistant prior to
 moving on to the `Setup` section.
 
-`Note`: If installing manually, in order to be alerted about new releases, you will need to subscribe to releases from this repository.
+`Note`: If installing manually, in order to be alerted about new releases, you will need to subscribe to releases from this repository
 
-## Local login patch
+# Cloud-control passcode
 
-The credential routine uses the Android 1.2.3 server RSA key, UTF-8, 245-byte chunks, PKCS#1 v1.5 and Android-compatible Base64 line breaks. It is copied from the evidence-backed pymazda-e implementation; the request pubKey is a separate client key. pymazda-e itself remains an independent library. This branch is not published upstream.
+The Control Passcode is required by Mazda for cloud vehicle controls. Bluetooth control in the Mazda app does not request it, so disable Bluetooth on the phone or move outside Bluetooth range before looking for the prompt:
 
-For testing, copy the complete custom_components/mazda_6e folder over your existing installation, restart Home Assistant, and add or reauthenticate Mazda 6e. Home Assistant installs the declared cryptography dependency. HACS updates can overwrite this local patch.
+1. Open the Mazda app with Bluetooth disabled or while outside Bluetooth range of the vehicle.
+2. Start a cloud vehicle-control action, such as locking or unlocking the doors.
+3. Enter the requested six-digit Control Passcode. If it is unknown, use **Forgot PWD** in the Mazda app to reset it.
+4. In Home Assistant, open the Mazda 6e integration and select **Reconfigure**.
+5. Enter the Mazda account credentials and the same six-digit Control Passcode.
 
-Offline unit tests cover encryption/chunking, login and email verification, retry, distinct generated IDs, and retaining an existing ID during reauthentication. Run `python -m pytest tests -q --disable-socket --allow-hosts=127.0.0.1,::1` with pytest, pytest-socket, voluptuous and cryptography installed. These use a minimal Home Assistant facade; they do not replace testing the flow in a running Home Assistant installation. No production server is contacted by the tests.
+Reconfiguration signs in again and registers the control key required for signed cloud commands. The passcode is stored in the Home Assistant config entry as an integration credential. It is encrypted before being sent to Mazda and is never exposed as a code field on the lock entity.
