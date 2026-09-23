@@ -80,6 +80,28 @@
         "name": "Fenster"
       }
     },
+    "switch": {
+      "front_defrost": {
+        "name": "Frontscheibenenteisung"
+      },
+      "steering_wheel_heat": {
+        "name": "Lenkradheizung"
+      }
+    },
+    "select": {
+      "driver_seat_heat": {
+        "name": "Fahrersitzheizung"
+      },
+      "passenger_seat_heat": {
+        "name": "Beifahrersitzheizung"
+      },
+      "driver_seat_ventilation": {
+        "name": "Fahrersitzbelüftung"
+      },
+      "passenger_seat_ventilation": {
+        "name": "Beifahrersitzbelüftung"
+      }
+    },
     "binary_sensor": {
       "air_conditioning": {
         "name": "Klimaanlage"

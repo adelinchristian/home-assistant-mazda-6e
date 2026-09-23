@@ -80,6 +80,28 @@
         "name": "Windows"
       }
     },
+    "switch": {
+      "front_defrost": {
+        "name": "Front defrost"
+      },
+      "steering_wheel_heat": {
+        "name": "Steering wheel heat"
+      }
+    },
+    "select": {
+      "driver_seat_heat": {
+        "name": "Driver seat heat"
+      },
+      "passenger_seat_heat": {
+        "name": "Passenger seat heat"
+      },
+      "driver_seat_ventilation": {
+        "name": "Driver seat ventilation"
+      },
+      "passenger_seat_ventilation": {
+        "name": "Passenger seat ventilation"
+      }
+    },
     "binary_sensor": {
       "air_conditioning": {
         "name": "Air conditioning"

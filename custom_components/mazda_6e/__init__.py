@@ -18,6 +18,8 @@ PLATFORMS = [
     Platform.DEVICE_TRACKER,
     Platform.LOCK,
     Platform.SENSOR,
+    Platform.SELECT,
+    Platform.SWITCH,
 ]
 
 _LOGGER = logging.getLogger(__name__)

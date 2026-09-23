@@ -270,6 +270,28 @@ class Mazda6EApi:
             {"open": open_trunk},
         )
 
+    async def async_set_defrost(self, vehicle_id: int, enabled: bool):
+        """Enable or disable the captured remote front-defrost control."""
+        return await self._async_signed_control(vehicle_id, "defrost", {"enabled": enabled})
+
+    async def async_set_steering_wheel_heat(self, vehicle_id: int, enabled: bool):
+        """Enable or disable the captured steering-wheel heat control."""
+        return await self._async_signed_control(vehicle_id, "steering-wheel/heat", {"open": enabled})
+
+    async def async_set_seat_mode(
+        self, vehicle_id: int, control: str, position: str, enabled: bool, level: int,
+    ):
+        """Set a captured front-seat heat or ventilation mode."""
+        if position not in ("master", "copilot"):
+            raise ValueError("Unknown seat position")
+        if level not in (1, 2, 3):
+            raise ValueError("Seat level must be between 1 and 3")
+        return await self._async_signed_control(
+            vehicle_id,
+            f"seats/{control}",
+            {f"{position}Switch": enabled, f"{position}Level": level},
+        )
+
     async def async_lock(self, vehicle_id: int):
         """Lock the vehicle doors through Mazda cloud control."""
         return await self._async_door_control(vehicle_id, open_doors=False)

@@ -41,6 +41,9 @@ depend on the vehicle capabilities Mazda advertises:
 	Control Passcode.
 - **Honk horn** triggers Mazda's captured horn command and does not require the Control
 	Passcode.
+- Front defrost and steering-wheel heat are exposed as switches.
+- Driver and passenger seat heating and ventilation are exposed as Off/Low/Medium/High
+	selects.
 
 The GPS tracker and speed sensor are created only when Mazda returns valid coordinates or
 speed in the vehicle status payload.
