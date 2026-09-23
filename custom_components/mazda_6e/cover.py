@@ -3,6 +3,7 @@
 from homeassistant.components.cover import CoverDeviceClass, CoverEntity, CoverEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import DOMAIN
@@ -73,11 +74,16 @@ class Mazda6eWindowsCover(_Mazda6eCover):
             return None
 
     async def async_open_cover(self, **kwargs) -> None:
-        await self.coordinator.api.async_set_windows(self.vehicle.vehicle_id, True)
-        await self.coordinator.async_request_refresh()
+        await self._async_set_windows(True)
 
     async def async_close_cover(self, **kwargs) -> None:
-        await self.coordinator.api.async_set_windows(self.vehicle.vehicle_id, False)
+        await self._async_set_windows(False)
+
+    async def _async_set_windows(self, open_windows: bool) -> None:
+        try:
+            await self.coordinator.api.async_set_windows(self.vehicle.vehicle_id, open_windows)
+        except (RuntimeError, TimeoutError) as err:
+            raise HomeAssistantError(f"Mazda rejected the window command: {err}") from err
         await self.coordinator.async_request_refresh()
 
 
@@ -95,9 +101,14 @@ class Mazda6eTrunkCover(_Mazda6eCover):
             return None
 
     async def async_open_cover(self, **kwargs) -> None:
-        await self.coordinator.api.async_set_trunk(self.vehicle.vehicle_id, True)
-        await self.coordinator.async_request_refresh()
+        await self._async_set_trunk(True)
 
     async def async_close_cover(self, **kwargs) -> None:
-        await self.coordinator.api.async_set_trunk(self.vehicle.vehicle_id, False)
+        await self._async_set_trunk(False)
+
+    async def _async_set_trunk(self, open_trunk: bool) -> None:
+        try:
+            await self.coordinator.api.async_set_trunk(self.vehicle.vehicle_id, open_trunk)
+        except (RuntimeError, TimeoutError) as err:
+            raise HomeAssistantError(f"Mazda rejected the trunk command: {err}") from err
         await self.coordinator.async_request_refresh()

@@ -34,6 +34,10 @@ class MazdaLoginError(Exception):
         super().__init__(f"Mazda login rejected with code {code}")
 
 
+class MazdaApiError(Exception):
+    """Mazda rejected an authenticated API request."""
+
+
 def now_ts():
     return str(int(time.time()))
 
@@ -70,7 +74,9 @@ class Mazda6EApi:
 
             # try again once
             return await self._request(url, headers, body, retry=False)
-        raise Exception("Mazda API request rejected")
+        code = raw.get("code", "unknown")
+        message = raw.get("msg", "unknown error")
+        raise MazdaApiError(f"Mazda API request rejected ({code}: {message})")
 
     async def login_email_password(self, email_enc, password_enc):
         if not self.control_public_key:

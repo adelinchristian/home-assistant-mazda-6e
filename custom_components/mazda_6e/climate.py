@@ -9,8 +9,10 @@ from homeassistant.components.climate import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
+from .api import MazdaApiError
 from .const import DOMAIN
 from .entity import Mazda6eEntity
 from .helpers.validators import temperature
@@ -83,7 +85,10 @@ class Mazda6eClimate(Mazda6eEntity, ClimateEntity):
         await self._async_set_climate(True, kwargs["temperature"])
 
     async def _async_set_climate(self, enabled: bool, target_temperature: float) -> None:
-        await self.coordinator.api.async_set_air_conditioner(
-            self.vehicle.vehicle_id, enabled, target_temperature,
-        )
+        try:
+            await self.coordinator.api.async_set_air_conditioner(
+                self.vehicle.vehicle_id, enabled, target_temperature,
+            )
+        except (MazdaApiError, RuntimeError, TimeoutError) as err:
+            raise HomeAssistantError(f"Mazda rejected the climate command: {err}") from err
         await self.coordinator.async_request_refresh()
