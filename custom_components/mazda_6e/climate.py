@@ -1,6 +1,11 @@
 """Climate controls for Mazda 6e vehicles."""
 
-from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode
+from homeassistant.components.climate import (
+    ClimateEntity,
+    ClimateEntityDescription,
+    ClimateEntityFeature,
+    HVACMode,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
@@ -9,6 +14,11 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from .const import DOMAIN
 from .entity import Mazda6eEntity
 from .helpers.validators import temperature
+
+DESCRIPTION = ClimateEntityDescription(
+    key="cabin_climate",
+    translation_key="cabin_climate",
+)
 
 
 async def async_setup_entry(
@@ -28,7 +38,6 @@ async def async_setup_entry(
 class Mazda6eClimate(Mazda6eEntity, ClimateEntity):
     """Control remote cabin climate through Mazda's captured cloud endpoint."""
 
-    _attr_translation_key = "cabin_climate"
     _attr_hvac_modes = [HVACMode.OFF, HVACMode.HEAT_COOL]
     _attr_min_temp = 16
     _attr_max_temp = 30
@@ -36,10 +45,7 @@ class Mazda6eClimate(Mazda6eEntity, ClimateEntity):
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
 
     def __init__(self, coordinator, vehicle) -> None:
-        class Description:
-            key = "cabin_climate"
-
-        super().__init__(coordinator, vehicle, Description())
+        super().__init__(coordinator, vehicle, DESCRIPTION)
 
     @property
     def supported_features(self) -> ClimateEntityFeature:

@@ -1,12 +1,18 @@
 """Button controls for Mazda 6e vehicles."""
 
-from homeassistant.components.button import ButtonEntity
+from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import DOMAIN
 from .entity import Mazda6eEntity
+
+DESCRIPTION = ButtonEntityDescription(
+    key="find_vehicle",
+    translation_key="find_vehicle",
+    icon="mdi:car-search",
+)
 
 
 async def async_setup_entry(
@@ -26,14 +32,8 @@ async def async_setup_entry(
 class Mazda6eFindVehicleButton(Mazda6eEntity, ButtonEntity):
     """Trigger Mazda's flashing-and-honking find-vehicle command."""
 
-    _attr_translation_key = "find_vehicle"
-    _attr_icon = "mdi:car-search"
-
     def __init__(self, coordinator, vehicle) -> None:
-        class Description:
-            key = "find_vehicle"
-
-        super().__init__(coordinator, vehicle, Description())
+        super().__init__(coordinator, vehicle, DESCRIPTION)
 
     @property
     def available(self) -> bool:

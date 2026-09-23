@@ -1,12 +1,26 @@
 """Cover controls for Mazda 6e windows and trunk."""
 
-from homeassistant.components.cover import CoverDeviceClass, CoverEntity
+from homeassistant.components.cover import CoverDeviceClass, CoverEntity, CoverEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .const import DOMAIN
 from .entity import Mazda6eEntity
+
+WINDOWS_DESCRIPTION = CoverEntityDescription(
+    key="windows",
+    translation_key="windows",
+    device_class=CoverDeviceClass.WINDOW,
+    icon="mdi:car-door",
+)
+
+TRUNK_DESCRIPTION = CoverEntityDescription(
+    key="trunk",
+    translation_key="trunk",
+    device_class=CoverDeviceClass.GARAGE,
+    icon="mdi:car-back",
+)
 
 
 def _supports(vehicle, *function_codes: str) -> bool:
@@ -48,15 +62,8 @@ class _Mazda6eCover(Mazda6eEntity, CoverEntity):
 class Mazda6eWindowsCover(_Mazda6eCover):
     """Represent all vehicle windows as one cover."""
 
-    _attr_translation_key = "windows"
-    _attr_device_class = CoverDeviceClass.WINDOW
-    _attr_icon = "mdi:car-door"
-
     def __init__(self, coordinator, vehicle) -> None:
-        class Description:
-            key = "windows"
-
-        super().__init__(coordinator, vehicle, Description())
+        super().__init__(coordinator, vehicle, WINDOWS_DESCRIPTION)
 
     @property
     def is_closed(self) -> bool | None:
@@ -77,15 +84,8 @@ class Mazda6eWindowsCover(_Mazda6eCover):
 class Mazda6eTrunkCover(_Mazda6eCover):
     """Represent the vehicle trunk as a cover."""
 
-    _attr_translation_key = "trunk"
-    _attr_device_class = CoverDeviceClass.GARAGE
-    _attr_icon = "mdi:car-back"
-
     def __init__(self, coordinator, vehicle) -> None:
-        class Description:
-            key = "trunk"
-
-        super().__init__(coordinator, vehicle, Description())
+        super().__init__(coordinator, vehicle, TRUNK_DESCRIPTION)
 
     @property
     def is_closed(self) -> bool | None:
