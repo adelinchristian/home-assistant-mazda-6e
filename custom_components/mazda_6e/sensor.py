@@ -38,6 +38,7 @@ class Mazda6eSensorDescription(SensorEntityDescription):
     """Description of a Mazda 6e Sensor."""
     value_fn: Callable[[dict[str, Any]], Any]
     attrs_fn: Callable[[dict], dict] | None = None
+    skip_if_unavailable: bool = True
 
 
 _SEAT_KEYS = {
@@ -165,6 +166,7 @@ SENSOR_TYPES: tuple[Mazda6eSensorDescription, ...] = (
         native_unit_of_measurement=UnitOfTime.MINUTES,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
+        skip_if_unavailable=False,
         value_fn=lambda data: remaining_charge_time(data["status"]["charge"]["remainChargeTime"]),
     ),
     Mazda6eSensorDescription(
@@ -273,7 +275,7 @@ async def async_setup_entry(
                 value = description.value_fn(data)
             except Exception:
                 continue
-            if value is None:
+            if value is None and description.skip_if_unavailable:
                 continue
 
             entities.append(
