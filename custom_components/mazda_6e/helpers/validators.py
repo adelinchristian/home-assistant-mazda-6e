@@ -34,6 +34,9 @@ def temperature(raw):
     except (TypeError, ValueError):
         return None
 
+    if raw == 0:
+        return None
+
     return raw / 10
 
 

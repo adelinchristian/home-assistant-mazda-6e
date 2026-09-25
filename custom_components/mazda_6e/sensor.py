@@ -273,7 +273,7 @@ async def async_setup_entry(
                 value = description.value_fn(data)
             except Exception:
                 continue
-            if description.key == "speed" and value is None:
+            if value is None:
                 continue
 
             entities.append(

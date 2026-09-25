@@ -92,4 +92,4 @@ class Mazda6eSeatSelect(Mazda6eEntity, SelectEntity):
             )
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the {self.name} command: {err}") from err
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh()

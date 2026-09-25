@@ -91,4 +91,4 @@ class Mazda6eClimate(Mazda6eEntity, ClimateEntity):
             )
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the climate command: {err}") from err
-        await self.coordinator.async_request_refresh()
+        await self.coordinator.async_refresh()

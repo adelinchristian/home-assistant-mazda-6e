@@ -58,7 +58,7 @@ class Mazda6eFindVehicleButton(Mazda6eEntity, ButtonEntity):
             await self.coordinator.api.async_find_vehicle(self.vehicle.vehicle_id)
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the Find vehicle command: {err}") from err
-        await self.coordinator.async_request_refresh()
+            await self.coordinator.async_refresh()
 
 
 class Mazda6eHonkHornButton(Mazda6eEntity, ButtonEntity):
@@ -76,4 +76,4 @@ class Mazda6eHonkHornButton(Mazda6eEntity, ButtonEntity):
             await self.coordinator.api.async_flash_honk(self.vehicle.vehicle_id, action_type=3)
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the Horn command: {err}") from err
-        await self.coordinator.async_request_refresh()
+            await self.coordinator.async_refresh()

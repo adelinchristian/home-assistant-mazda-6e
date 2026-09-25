@@ -58,7 +58,7 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
                 sign_omit_keys=sign_omit_keys,
             )
 
-        await self.async_request_refresh()
+        await self.async_refresh()
         return result
 
     async def _async_get_function_config(self, vehicle_id: int) -> set[str]:
