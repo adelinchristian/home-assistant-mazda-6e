@@ -75,7 +75,17 @@ class Mazda6eWindowsCover(_Mazda6eCover):
             await self.coordinator.api.async_set_windows(self.vehicle.vehicle_id, open_windows)
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the window command: {err}") from err
-        await self.coordinator.async_refresh()
+
+        await self.coordinator.async_refresh_until(
+            lambda: self._window_state_matches(open_windows),
+        )
+
+    def _window_state_matches(self, open_windows: bool) -> bool:
+        try:
+            windows = self.vehicle_data["status"]["window"]["windows"]
+            return any(windows) is open_windows
+        except (KeyError, TypeError):
+            return False
 
 
 # Trunk control is exposed through the lock platform.

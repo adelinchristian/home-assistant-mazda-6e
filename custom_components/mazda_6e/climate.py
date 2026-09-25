@@ -91,4 +91,18 @@ class Mazda6eClimate(Mazda6eEntity, ClimateEntity):
             )
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the climate command: {err}") from err
-        await self.coordinator.async_refresh()
+        await self.coordinator.async_refresh_until(
+            lambda: self._climate_state_matches(enabled, target_temperature),
+        )
+
+    def _climate_state_matches(self, enabled: bool, target_temperature: float) -> bool:
+        expected_mode = HVACMode.HEAT_COOL if enabled else HVACMode.OFF
+        if self.hvac_mode != expected_mode:
+            return False
+        if not enabled:
+            return True
+        current_temperature = self.target_temperature
+        return (
+            current_temperature is not None
+            and abs(current_temperature - target_temperature) < 0.1
+        )

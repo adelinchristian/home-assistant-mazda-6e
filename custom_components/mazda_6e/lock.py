@@ -77,12 +77,12 @@ class Mazda6eDoorLock(CoordinatorEntity, LockEntity):
     async def async_lock(self, **kwargs) -> None:
         """Lock the vehicle doors."""
         await self.coordinator.api.async_lock(self.vehicle.vehicle_id)
-        await self.coordinator.async_refresh()
+        await self.coordinator.async_refresh_until(lambda: self.is_locked is True)
 
     async def async_unlock(self, **kwargs) -> None:
         """Unlock the vehicle doors."""
         await self.coordinator.api.async_unlock(self.vehicle.vehicle_id)
-        await self.coordinator.async_refresh()
+        await self.coordinator.async_refresh_until(lambda: self.is_locked is False)
 
 
 class Mazda6eTrunkLock(CoordinatorEntity, LockEntity):
@@ -134,4 +134,6 @@ class Mazda6eTrunkLock(CoordinatorEntity, LockEntity):
             await self.coordinator.api.async_set_trunk(self.vehicle.vehicle_id, open_trunk)
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the trunk command: {err}") from err
-        await self.coordinator.async_refresh()
+        await self.coordinator.async_refresh_until(
+            lambda: self.is_locked is (not open_trunk),
+        )

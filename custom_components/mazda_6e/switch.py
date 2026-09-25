@@ -84,4 +84,4 @@ class Mazda6eControlSwitch(Mazda6eEntity, SwitchEntity):
                 await self.coordinator.api.async_set_steering_wheel_heat(self.vehicle.vehicle_id, enabled)
         except (MazdaApiError, RuntimeError, TimeoutError) as err:
             raise HomeAssistantError(f"Mazda rejected the {self.name} command: {err}") from err
-        await self.coordinator.async_refresh()
+        await self.coordinator.async_refresh_until(lambda: self.is_on is enabled)

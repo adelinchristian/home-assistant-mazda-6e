@@ -2,6 +2,7 @@ import logging
 import asyncio
 
 from datetime import timedelta
+from collections.abc import Callable
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
@@ -60,6 +61,21 @@ class Mazda6eCoordinator(DataUpdateCoordinator):
 
         await self.async_refresh()
         return result
+
+    async def async_refresh_until(
+        self,
+        state_matches: Callable[[], bool],
+        *,
+        attempts: int = 10,
+        interval_seconds: float = 2.0,
+    ) -> None:
+        """Refresh until a control's state is visible in the vehicle status."""
+        for attempt in range(attempts):
+            await self.async_refresh()
+            if state_matches():
+                return
+            if attempt < attempts - 1:
+                await asyncio.sleep(interval_seconds)
 
     async def _async_get_function_config(self, vehicle_id: int) -> set[str]:
         """Fetch the vehicle's supported functions once and cache them."""
